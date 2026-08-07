@@ -1,0 +1,7 @@
+[tlcp-server] TLCP handshake OK: NTLSv1.1 ECC-SM2-SM4-GCM-SM3
+[tlcp-server] TLCP handshake OK: NTLSv1.1 ECC-SM2-SM4-GCM-SM3
+[tlcp-server] TLCP handshake OK: NTLSv1.1 ECC-SM2-SM4-GCM-SM3
+>>> accepted QUIC connection (total 1)
+>>> accepted QUIC connection (total 1)
+>>> accepted QUIC connection (total 2)
+[testserver] 监听 :18884 (TLCP+ws), 上游 192.168.64.16:1883

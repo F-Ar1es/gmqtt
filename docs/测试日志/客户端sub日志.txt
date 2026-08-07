@@ -1,0 +1,30 @@
+### test-gmwss-sub.log
+SUBSCRIBED gmqtt/gmwss (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/gmwss hello-gmwss
+### test-mqtt-sub.log
+SUBSCRIBED gmqtt/mqtt (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/mqtt hello-mqtt
+### test-mqtts-sub.log
+SUBSCRIBED gmqtt/mqtts (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/mqtts hello-mqtts
+### test-quic-gm-sub.log
+SUBSCRIBED gmqtt/quic-gm (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/quic-gm hello-quic-gm
+### test-quic-sub.log
+错误: quic dial: timeout: no recent network activity
+### test-tlcp-sub.log
+SUBSCRIBED gmqtt/tlcp (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/tlcp hello-tlcp
+### test-ws-sub.log
+SUBSCRIBED gmqtt/ws (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/ws hello-ws
+### test-wss-sub.log
+SUBSCRIBED gmqtt/wss (等待消息, Ctrl-C 退出)
+SUBACK ok
+gmqtt/wss hello-wss
