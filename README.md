@@ -4,7 +4,7 @@
 
 ## 特性
 
-- **6 种连接方式**:`mqtt`(明文)、`mqtts`(标准 TLS)、`tlcp`(国密 TLCP)、`ws`(WebSocket)、`wss`(TLS+WS)、`gmwss`(国密 TLCP+WS)
+- **7 种连接方式**:`mqtt`(明文)、`mqtts`(标准 TLS)、`tlcp`(国密 TLCP)、`ws`(WebSocket)、`wss`(TLS+WS)、`gmwss`(国密 TLCP+WS)、`quic`(QUIC, UDP)
 - **3 种协议版本**:MQTT 3.1 / 3.1.1 / 5.0
 - **国密支持**:基于 Tongsuo 8.4.0(静态链接),SM2 双证书 + NTLS
 - **跨架构**:amd64 / arm64 静态二进制,无运行时依赖
@@ -36,13 +36,14 @@
 | `ws` | 明文 WebSocket | 8083 | `-ws-path /mqtt` |
 | `wss` | TLS + WebSocket | 8084 | `--cafile` + `-ws-path /mqtt` |
 | `gmwss` | 国密 TLCP + WebSocket | 自定义 | `--cafile`(SM2 CA) |
+| `quic` | MQTT over QUIC(UDP) | 14567 | `--cafile`(可选) |
 
 ## 全部参数
 
 ```
 gmqtt pub|sub|conn -s <scheme> -h <host> -p <port> [选项]
 
-  -s <scheme>        连接方式 mqtt|mqtts|tlcp|ws|wss|gmwss(默认 mqtt)
+  -s <scheme>        连接方式 mqtt|mqtts|tlcp|ws|wss|gmwss|quic(默认 mqtt)
   -h <host>          主机(默认 127.0.0.1)
   -p <port>          端口(默认 1883)
   -t <topic>         主题(pub/sub 必需)
@@ -78,6 +79,22 @@ gmqtt pub|sub|conn -s <scheme> -h <host> -p <port> [选项]
 # 用 gmqtt 连接
 ./gmqtt conn -s gmwss -h 127.0.0.1 -p 18884 --cafile sm2-root-ca.crt
 ```
+
+## MQTT over QUIC
+
+标准 MQTT over QUIC(EMQX 5.8+ 原生 quic listener,默认 14567):
+
+```bash
+# 服务器:EMQX 启用 quic listener
+#   listeners.quic.default { bind = "0.0.0.0:14567" }
+
+# 客户端
+./gmqtt conn -s quic -h broker-host -p 14567
+./gmqtt pub -s quic -h broker-host -p 14567 -t "topic" -m "msg"
+./gmqtt sub -s quic -h broker-host -p 14567 -t "topic"
+```
+
+说明:QUIC 传输基于 quic-go,服务器推送经新流接收(已实现多流合并);国密 QUIC 需 Tongsuo 支持(8.4.0 暂无 QUIC),列为远期方向。
 
 ## 从源码构建
 

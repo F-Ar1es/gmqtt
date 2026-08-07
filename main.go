@@ -103,6 +103,8 @@ func dial(o *options) (io.ReadWriteCloser, error) {
 		return TLCPDial(addr, tlcpCfg, 10*time.Second)
 	case "ws", "wss", "gmwss":
 		return wsDial(o)
+	case "quic":
+		return quicDial(o)
 	default:
 		return nil, fmt.Errorf("unknown scheme %q", o.scheme)
 	}
