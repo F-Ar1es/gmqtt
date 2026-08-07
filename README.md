@@ -9,7 +9,7 @@
 - **`gmquic-client`**:国密 QUIC 命令行客户端
 - **Tongsuo 8.5.0-pre2 国密 QUIC patch**(`patches/`):放开 QUIC 套件白名单 + record layer SM4 支持(5 处修改)
 
-## 连接方式矩阵(9 种)
+## 连接方式矩阵(8 种连接方式 + gmquic-client 独立工具)
 
 | `-s` | 传输 | 端口 | 需要 |
 |---|---|---|---|
