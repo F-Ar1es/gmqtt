@@ -105,6 +105,8 @@ func dial(o *options) (io.ReadWriteCloser, error) {
 		return wsDial(o)
 	case "quic":
 		return quicDial(o)
+	case "quic-gm":
+		return quicGMDial(o)
 	default:
 		return nil, fmt.Errorf("unknown scheme %q", o.scheme)
 	}

@@ -1,8 +1,8 @@
 package main
 
 /*
-#cgo CFLAGS: -I/opt/tongsuo/include
-#cgo LDFLAGS: /opt/tongsuo/lib/libssl.a /opt/tongsuo/lib/libcrypto.a -ldl -lpthread
+#cgo CFLAGS: -I/opt/tongsuo85/include
+#cgo LDFLAGS: /opt/tongsuo85/lib/libssl.a /opt/tongsuo85/lib/libcrypto.a -ldl -lpthread
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>

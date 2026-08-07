@@ -1,0 +1,73 @@
+===== include/internal/quic_record_util.h =====
+@@ -74,6 +74,7 @@
+ # define QRL_SUITE_AES128GCM            1 /* SHA256 */
+ # define QRL_SUITE_AES256GCM            2 /* SHA384 */
+ # define QRL_SUITE_CHACHA20POLY1305     3 /* SHA256 */
++# define QRL_SUITE_SM4GCM                   4 /* SM3 */
+ 
+ /* Returns cipher name in bytes or NULL if suite ID is invalid. */
+ const char *ossl_qrl_get_suite_cipher_name(uint32_t suite_id);
+===== include/internal/quic_wire_pkt.h =====
+@@ -165,6 +165,7 @@
+ #  define QUIC_HDR_PROT_CIPHER_AES_128    1
+ #  define QUIC_HDR_PROT_CIPHER_AES_256    2
+ #  define QUIC_HDR_PROT_CIPHER_CHACHA     3
++#  define QUIC_HDR_PROT_CIPHER_SM4        4
+ 
+ /*
+  * Initialises a header protector.
+===== ssl/quic/quic_record_util.c =====
+@@ -212,6 +212,13 @@
+     ((uint64_t)1) << 36,    /* Limit as prescribed by RFC 9001 */
+ };
+ 
++static const struct suite_info suite_sm4gcmsm3 = {
++    "SM4-GCM", "SM3", 32, 16, 12, 16, 16,
++    QUIC_HDR_PROT_CIPHER_SM4,
++    UINT64_MAX - 1,         /* No applicable limit (analogous to ChaCha20) */
++    ((uint64_t)1) << 36,    /* Limit as prescribed by RFC 9001 */
++};
++
+ static const struct suite_info *get_suite(uint32_t suite_id)
+ {
+     switch (suite_id) {
+@@ -221,6 +228,8 @@
+             return &suite_aes256gcm;
+         case QRL_SUITE_CHACHA20POLY1305:
+             return &suite_chacha20poly1305;
++        case QRL_SUITE_SM4GCM:
++            return &suite_sm4gcmsm3;
+         default:
+             return NULL;
+     }
+===== ssl/quic/quic_tls.c =====
+@@ -162,6 +162,8 @@
+             suite_id = QRL_SUITE_AES256GCM;
+         } else if (EVP_CIPHER_is_a(ciph, "CHACHA20-POLY1305")) {
+             suite_id = QRL_SUITE_CHACHA20POLY1305;
++        } else if (EVP_CIPHER_is_a(ciph, "SM4-GCM")) {
++            suite_id = QRL_SUITE_SM4GCM;
+         } else {
+             QUIC_TLS_FATAL(rl, SSL_AD_INTERNAL_ERROR, SSL_R_UNKNOWN_CIPHER_TYPE);
+             goto err;
+===== ssl/quic/quic_wire_pkt.c =====
+@@ -29,6 +29,9 @@
+             break;
+         case QUIC_HDR_PROT_CIPHER_CHACHA:
+             cipher_name = "ChaCha20";
++            break;
++        case QUIC_HDR_PROT_CIPHER_SM4:
++            cipher_name = "SM4-ECB";
+             break;
+         default:
+             ERR_raise(ERR_LIB_SSL, ERR_R_UNSUPPORTED);
+@@ -83,7 +86,8 @@
+     size_t i;
+ 
+     if (hpr->cipher_id == QUIC_HDR_PROT_CIPHER_AES_128
+-        || hpr->cipher_id == QUIC_HDR_PROT_CIPHER_AES_256) {
++        || hpr->cipher_id == QUIC_HDR_PROT_CIPHER_AES_256
++        || hpr->cipher_id == QUIC_HDR_PROT_CIPHER_SM4) {
+         if (sample_len < 16) {
+             ERR_raise(ERR_LIB_SSL, ERR_R_PASSED_INVALID_ARGUMENT);
+             return 0;
